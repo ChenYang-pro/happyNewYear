@@ -22,7 +22,7 @@
 	var context = canvas.getContext("2d");
 
 	function autoPlay() {
-		
+
 		myAuto = document.getElementById('bgMusic');
 
 		myAuto.play();
@@ -45,12 +45,12 @@
 	window.addEventListener("resize", resizeCanvas);
 
 
-	function mouseDownHandler(e) {
-		var x = e.clientX;
-		var y = e.clientY;
-		createFireworks(x, y, ["天天快乐", "虎年大吉", "新年快乐", "想你"][parseInt(Math.random()*5)]);
-	}
-	document.addEventListener("mousedown", mouseDownHandler);
+	// function mouseDownHandler(e) {
+	// 	var x = e.clientX;
+	// 	var y = e.clientY;
+	// 	createFireworks(x, y, ["天天想我", "虎年大吉", "元气满满", "万事顺意", "吃啥都不胖", "论文必中"][parseInt(Math.random() * 6)]);
+	// }
+	// document.addEventListener("mousedown", mouseDownHandler);
 
 	var particles = [];
 
