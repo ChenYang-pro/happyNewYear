@@ -1,6 +1,5 @@
 ﻿javascript: !(function () {
   var textCanvas = document.createElement('canvas');
-  var myAuto;
   textCanvas.width = 1000;
   textCanvas.height = 300;
   var textctx = textCanvas.getContext('2d');
@@ -18,7 +17,7 @@
   var context = canvas.getContext('2d');
 
   function autoPlay() {
-    myAuto = document.getElementById('bgMusic');
+    const myAuto = new Audio('../audio/explosion0.mp3');
     myAuto.play();
   }
 
@@ -48,6 +47,7 @@
         parseInt(Math.random() * 6)
       ]
     );
+    autoPlay();
   }
   document.addEventListener('mousedown', mouseDownHandler);
 
@@ -56,7 +56,6 @@
   function createFireworks(x, y, text = '') {
     var hue = Math.random() * 360;
     var hueVariance = 30;
-	autoPlay();
 
     function setupColors(p) {
       p.hue =
@@ -141,7 +140,6 @@
   }
   function drawFireworks() {
     clearCanvas();
-    autoPlay();
     for (var i = 0; i < particles.length; i++) {
       var p = particles[i];
       p.x += (p.fx - p.x) / 10;
@@ -173,6 +171,7 @@
         Math.random() * canvas.width,
         Math.random() * canvas.height
       );
+      autoPlay();
     }
 
     context.globalCompositeOperation = 'destination-out';
