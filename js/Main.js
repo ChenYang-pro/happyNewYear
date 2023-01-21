@@ -1,181 +1,188 @@
-﻿javascript:
+﻿javascript: !(function () {
+  var textCanvas = document.createElement('canvas');
+  var myAuto;
+  textCanvas.width = 1000;
+  textCanvas.height = 300;
+  var textctx = textCanvas.getContext('2d');
+  textctx.fillStyle = '#000000';
+  textctx.fillRect(0, 0, textCanvas.width, textCanvas.height);
 
-!(function () {
+  var canvas = document.createElement('canvas');
+  document.body.appendChild(canvas);
 
-	var textCanvas = document.createElement("canvas");
-	var myAuto
-	textCanvas.width = 1000;
-	textCanvas.height = 300;
-	var textctx = textCanvas.getContext("2d");
-	textctx.fillStyle = "#000000";
-	textctx.fillRect(0, 0, textCanvas.width, textCanvas.height);
+  canvas.style.position = 'fixed';
+  canvas.style.left = '0';
+  canvas.style.top = '0';
+  canvas.style.zIndex = -1;
 
+  var context = canvas.getContext('2d');
 
-	var canvas = document.createElement("canvas");
-	document.body.appendChild(canvas);
+  function autoPlay() {
+    myAuto = document.getElementById('bgMusic');
+    myAuto.play();
+  }
 
-	canvas.style.position = "fixed";
-	canvas.style.left = "0";
-	canvas.style.top = "0";
-	canvas.style.zIndex = -1;
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-	var context = canvas.getContext("2d");
+    clearCanvas();
+  }
 
-	function autoPlay() {
+  function clearCanvas() {
+    context.fillStyle = '#000000';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+  }
 
-		myAuto = document.getElementById('bgMusic');
+  resizeCanvas();
 
-		myAuto.play();
-	}
+  window.addEventListener('resize', resizeCanvas);
 
-	function resizeCanvas() {
-		canvas.width = window.innerWidth;
-		canvas.height = window.innerHeight;
+  function mouseDownHandler(e) {
+    var x = e.clientX;
+    var y = e.clientY;
+    createFireworks(
+      x,
+      y,
+      ['张诗予', '姜琳', '元气满满', '万事顺意', '吃啥都不胖', '天天开心'][
+        parseInt(Math.random() * 6)
+      ]
+    );
+  }
+  document.addEventListener('mousedown', mouseDownHandler);
 
-		clearCanvas();
-	}
+  var particles = [];
 
-	function clearCanvas() {
-		context.fillStyle = "#000000";
-		context.fillRect(0, 0, canvas.width, canvas.height);
-	}
+  function createFireworks(x, y, text = '') {
+    var hue = Math.random() * 360;
+    var hueVariance = 30;
+	autoPlay();
 
-	resizeCanvas();
+    function setupColors(p) {
+      p.hue =
+        Math.floor(Math.random() * (hue + hueVariance - (hue - hueVariance))) +
+        (hue - hueVariance);
+      p.brightness = Math.floor(Math.random() * 21) + 50;
+      p.alpha = (Math.floor(Math.random() * 61) + 40) / 100;
+    }
 
-	window.addEventListener("resize", resizeCanvas);
+    if (text != '') {
+      var gap = 6;
+      var fontSize = 96;
 
+      textctx.font = fontSize + 'px Verdana';
+      textctx.fillStyle = '#ffffff';
 
-	// function mouseDownHandler(e) {
-	// 	var x = e.clientX;
-	// 	var y = e.clientY;
-	// 	createFireworks(x, y, ["天天想我", "虎年大吉", "元气满满", "万事顺意", "吃啥都不胖", "论文必中"][parseInt(Math.random() * 6)]);
-	// }
-	// document.addEventListener("mousedown", mouseDownHandler);
+      var textWidth = textctx.measureText(text).width;
+      var textHeight = fontSize;
 
-	var particles = [];
+      textctx.fillText(text, 0, textHeight);
+      var imgData = textctx.getImageData(0, 0, textWidth, textHeight * 1.2);
 
-	function createFireworks(x, y, text = "") {
+      textctx.fillStyle = '#000000';
+      textctx.fillRect(0, 0, textCanvas.width, textCanvas.height);
 
-		var hue = Math.random() * 360;
-		var hueVariance = 30;
+      for (var h = 0; h < textHeight * 1.2; h += gap) {
+        for (var w = 0; w < textWidth; w += gap) {
+          var position = (textWidth * h + w) * 4;
+          var r = imgData.data[position],
+            g = imgData.data[position + 1],
+            b = imgData.data[position + 2],
+            a = imgData.data[position + 3];
 
-		function setupColors(p) {
-			p.hue = Math.floor(Math.random() * ((hue + hueVariance) - (hue - hueVariance))) + (hue - hueVariance);
-			p.brightness = Math.floor(Math.random() * 21) + 50;
-			p.alpha = (Math.floor(Math.random() * 61) + 40) / 100;
-		}
+          if (r + g + b == 0) continue;
 
-		if (text != "") {
+          var p = {};
 
-			var gap = 6;
-			var fontSize = 96;
+          p.x = x;
+          p.y = y;
 
-			textctx.font = fontSize + "px Verdana";
-			textctx.fillStyle = "#ffffff";
+          p.fx = x + w - textWidth / 2;
+          p.fy = y + h - textHeight / 2;
 
-			var textWidth = textctx.measureText(text).width;
-			var textHeight = fontSize;
+          p.size = Math.floor(Math.random() * 2) + 1;
+          p.speed = 1;
 
-			textctx.fillText(text, 0, textHeight);
-			var imgData = textctx.getImageData(0, 0, textWidth, textHeight * 1.2);
+          setupColors(p);
 
-			textctx.fillStyle = "#000000";
-			textctx.fillRect(0, 0, textCanvas.width, textCanvas.height);
+          particles.push(p);
+        }
+      }
+    } else {
+      var count = 100;
+      for (var i = 0; i < count; i++) {
+        //角度
+        var angle = (360 / count) * i;
+        //弧度
+        var radians = (angle * Math.PI) / 180;
 
-			for (var h = 0; h < textHeight * 1.2; h += gap) {
-				for (var w = 0; w < textWidth; w += gap) {
-					var position = (textWidth * h + w) * 4;
-					var r = imgData.data[position], g = imgData.data[position + 1], b = imgData.data[position + 2], a = imgData.data[position + 3];
+        var p = {};
 
-					if (r + g + b == 0) continue;
+        p.x = x;
+        p.y = y;
+        p.radians = radians;
 
-					var p = {};
+        //大小
+        p.size = Math.random() * 2 + 1;
 
-					p.x = x;
-					p.y = y;
+        //速度
+        p.speed = Math.random() * 5 + 0.4;
 
-					p.fx = x + w - textWidth / 2;
-					p.fy = y + h - textHeight / 2;
+        //半径
+        p.radius = Math.random() * 81 + 50;
 
-					p.size = Math.floor(Math.random() * 2) + 1;
-					p.speed = 1;
+        p.fx = x + Math.cos(radians) * p.radius;
+        p.fy = y + Math.sin(radians) * p.radius;
 
-					setupColors(p);
+        setupColors(p);
+        particles.push(p);
+      }
+    }
+  }
+  function drawFireworks() {
+    clearCanvas();
+    autoPlay();
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      p.x += (p.fx - p.x) / 10;
+      p.y += (p.fy - p.y) / 10 - (p.alpha - 1) * p.speed;
 
-					particles.push(p);
-				}
-			}
-		} else {
-			var count = 100;
-			for (var i = 0; i < count; i++) {
-				//角度
-				var angle = 360 / count * i;
-				//弧度
-				var radians = angle * Math.PI / 180;
+      p.alpha -= 0.006;
 
-				var p = {};
+      if (p.alpha <= 0) {
+        particles.splice(i, 1);
+        continue;
+      }
 
-				p.x = x;
-				p.y = y;
-				p.radians = radians;
+      context.beginPath();
+      context.arc(p.x, p.y, p.size, 0, Math.PI * 2, false);
+      context.closePath();
 
-				//大小
-				p.size = Math.random() * 2 + 1;
+      context.fillStyle =
+        'hsla(' + p.hue + ',100%,' + p.brightness + '%,' + p.alpha + ')';
+      context.fill();
+    }
+  }
 
-				//速度
-				p.speed = Math.random() * 5 + .4;
+  //requestAnimationFrame
+  var lastStamp = 0;
+  function tick(opt = 0) {
+    if (opt - lastStamp > 1000) {
+      lastStamp = opt;
+      createFireworks(
+        Math.random() * canvas.width,
+        Math.random() * canvas.height
+      );
+    }
 
-				//半径
-				p.radius = Math.random() * 81 + 50;
+    context.globalCompositeOperation = 'destination-out';
+    context.fillStyle = 'rgba(0,0,0,' + 10 / 100 + ')';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.globalCompositeOperation = 'lighter';
 
-				p.fx = x + Math.cos(radians) * p.radius;
-				p.fy = y + Math.sin(radians) * p.radius;
+    drawFireworks();
 
-				setupColors(p);
-				particles.push(p);
-			}
-		}
-	}
-	function drawFireworks() {
-		clearCanvas();
-		// autoPlay()
-		for (var i = 0; i < particles.length; i++) {
-			var p = particles[i];
-			p.x += (p.fx - p.x) / 10;
-			p.y += (p.fy - p.y) / 10 - (p.alpha - 1) * p.speed;
-
-			p.alpha -= 0.006;
-
-			if (p.alpha <= 0) {
-				particles.splice(i, 1);
-				continue;
-			}
-
-			context.beginPath();
-			context.arc(p.x, p.y, p.size, 0, Math.PI * 2, false);
-			context.closePath();
-
-			context.fillStyle = 'hsla(' + p.hue + ',100%,' + p.brightness + '%,' + p.alpha + ')';
-			context.fill();
-		}
-	}
-
-	//requestAnimationFrame
-	var lastStamp = 0;
-	function tick(opt = 0) {
-		if (opt - lastStamp > 300) {
-			lastStamp = opt;
-			createFireworks(Math.random() * canvas.width, Math.random() * canvas.height);
-		}
-
-		context.globalCompositeOperation = 'destination-out';
-		context.fillStyle = 'rgba(0,0,0,' + 10 / 100 + ')';
-		context.fillRect(0, 0, canvas.width, canvas.height);
-		context.globalCompositeOperation = 'lighter';
-
-		drawFireworks();
-
-		requestAnimationFrame(tick);
-	}
-	tick();
+    requestAnimationFrame(tick);
+  }
+  tick();
 })();
