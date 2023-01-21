@@ -47,7 +47,6 @@
         parseInt(Math.random() * 6)
       ]
     );
-    autoPlay();
   }
   document.addEventListener('mousedown', mouseDownHandler);
 
@@ -56,7 +55,7 @@
   function createFireworks(x, y, text = '') {
     var hue = Math.random() * 360;
     var hueVariance = 30;
-
+    autoPlay();
     function setupColors(p) {
       p.hue =
         Math.floor(Math.random() * (hue + hueVariance - (hue - hueVariance))) +
@@ -165,7 +164,7 @@
   //requestAnimationFrame
   var lastStamp = 0;
   function tick(opt = 0) {
-    if (opt - lastStamp > 1000) {
+    if (opt - lastStamp > 1500) {
       lastStamp = opt;
       createFireworks(
         Math.random() * canvas.width,
